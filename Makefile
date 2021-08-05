@@ -24,7 +24,13 @@ OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 #OPTFLAGS += -DHAVE_SYS_PSTAT_H
 
 # DARWIN
-#OPTFLAGS += -DDARWIN
+OPTFLAGS += -DDARWIN
+
+# Homebrew on macOS
+CFLAGS += -I/usr/local/opt/openssl/include
+OPTFLAGS += -DDEFAULT_CA_FILE='"/usr/local/etc/openssl@1.1/cacert.pem"'
+OPTFLAGS += -DDEFAULT_CA_DIR=NULL
+LDFLAGS += -L/usr/local/opt/openssl/lib
 
 # CYGWIN
 #OPTFLAGS += -DCYGWIN
