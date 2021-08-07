@@ -5,6 +5,11 @@
 name = proxytunnel
 version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
+prefix = /usr/local
+bindir = $(prefix)/bin
+datadir = $(prefix)/share
+mandir = $(datadir)/man
+
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
 
@@ -27,9 +32,13 @@ OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 #OPTFLAGS += -DDARWIN
 
 # DARWIN, continued, if compiling for macOS with Homebrew
-#CFLAGS += -I/usr/local/opt/openssl/include
-#LDFLAGS += -L/usr/local/opt/openssl/lib
-#OPTFLAGS += -DDEFAULT_CA_FILE='"/usr/local/etc/openssl@1.1/cacert.pem"'
+#openssl_bin = $(prefix)/opt/openssl/bin/openssl
+#cacert_dir = $(shell "$(openssl_bin)" version -d | sed -E 's/^[^"]+"|"$$//g')
+#cacert_file = $(cacert_dir)/cacert.pem
+
+#CFLAGS += -I$(prefix)/opt/openssl/include
+#LDFLAGS += -L$(prefix)/opt/openssl/lib
+#OPTFLAGS += -DDEFAULT_CA_FILE='$(subst ','"'"',$(subst \,\\,$(shell gls --quoting-style=c "$(cacert_file)")))'
 #OPTFLAGS += -DDEFAULT_CA_DIR=NULL
 
 # CYGWIN
@@ -49,11 +58,6 @@ ifeq ($(SSL_LIBS),)
 SSL_LIBS := -lssl -lcrypto
 endif
 LDFLAGS += $(SSL_LIBS)
-
-prefix = /usr/local
-bindir = $(prefix)/bin
-datadir = $(prefix)/share
-mandir = $(datadir)/man
 
 # Remove strlcpy/strlcat on (open)bsd/darwin systems
 OBJ = proxytunnel.o	\
