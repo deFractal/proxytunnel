@@ -31,21 +31,15 @@ OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 # DARWIN
 OPTFLAGS += -DDARWIN
 
-# Homebrew on macOS
-CFLAGS += -I/usr/local/opt/openssl/include
-OPTFLAGS += -DDEFAULT_CA_FILE='"/usr/local/etc/openssl@1.1/cacert.pem"'
-OPTFLAGS += -DDEFAULT_CA_DIR=NULL
-LDFLAGS += -L/usr/local/opt/openssl/lib
-
 # DARWIN, continued, if compiling for macOS with Homebrew
-#openssl_bin = $(prefix)/opt/openssl/bin/openssl
-#cacert_dir = $(shell "$(openssl_bin)" version -d | sed -E 's/^[^"]+"|"$$//g')
-#cacert_file = $(cacert_dir)/cacert.pem
+openssl_bin = $(prefix)/opt/openssl/bin/openssl
+cacert_dir = $(shell "$(openssl_bin)" version -d | sed -E 's/^[^"]+"|"$$//g')
+cacert_file = $(cacert_dir)/cacert.pem
 
-#CFLAGS += -I$(prefix)/opt/openssl/include
-#LDFLAGS += -L$(prefix)/opt/openssl/lib
-#OPTFLAGS += -DDEFAULT_CA_FILE='$(subst ','"'"',$(subst \,\\,$(shell gls --quoting-style=c "$(cacert_file)")))'
-#OPTFLAGS += -DDEFAULT_CA_DIR=NULL
+CFLAGS += -I$(prefix)/opt/openssl/include
+LDFLAGS += -L$(prefix)/opt/openssl/lib
+OPTFLAGS += -DDEFAULT_CA_FILE='$(subst ','"'"',$(subst \,\\,$(shell gls --quoting-style=c "$(cacert_file)")))'
+OPTFLAGS += -DDEFAULT_CA_DIR=NULL
 
 # CYGWIN
 #OPTFLAGS += -DCYGWIN
